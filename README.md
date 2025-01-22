@@ -19,9 +19,9 @@ The proposed Deep Reconstruction Forecast Network is designed to perform time-se
 
 ![Model Architecture](DRFN.jpeg)
 
-## Transfer Learning with \acrshort{dfrn}
+## Transfer Learning with DRFN
 
-The \acrshort{dfrn} enables domain adaptation through a two-step process:
+The DRFN enables domain adaptation through a two-step process:
 
 ### Training in the Source Domain
 - The encoder, decoder, and forecaster are trained together using labeled data from the source domain.
@@ -47,8 +47,102 @@ Create a new Python virtual environment. You can do this by running the followin
 ```bash
 # Create the virtual environment (change 'env_name' to your preferred name)
 python3 -m venv env_name
-
-
+```
+Activate the virtual environment 
 ```bash
-# Create the virtual environment (change 'env_name' to your preferred name)
+# macOS/Linux
 source env_name/bin/activate
+# Windows
+env_name\Scripts\activate
+```
+### Install Required Packages
+Once the virtual environment is activated, install the required Python packages by running:
+```bash
+pip install -r requirements.txt
+```
+This will install all the necessary dependencies for the project.
+
+## Model Training and Testing
+
+To train the DRFN model, you need to provide your own CSV file with data. Follow these steps:
+
+### Format of the CSV File
+Ensure your CSV files are formatted properly. It should contain time series data containing a datetime index column. Make sure the CSV has proper headers and the "target column" is in the first column or you can change the data transformation codes in utilities.py to suit your dataset. 
+
+### Modify csv file path in code
+
+After preparing your CSV file, open the train_source_drfn.py file and change the file path to your own CSV file in the appropriate section of the code:
+
+```python
+csv_file_path = 'path_to_your_file.csv'
+```
+
+### Modify the model parameters
+
+In  the train_source_drfn.py and update model parameters to suit your needs. 
+
+```python
+# Model parameters used to structure input tensors and model input/output shapes 
+window_len = 12 # number of historical datapoints to consider
+forecast_len = 12 # forecast length to consider
+latent_dim = 2 # latent dimension 
+n_total_features = 18 # number of features in the dataset
+batch_size = 50 # batch size for data batching
+```
+
+### Create Tensorflow dataset objects 
+
+In the train_source_drfn.py make any updates to training sizes and test sizes and split data. The training and testing split needs to be done before the datasets being processed into tensor_objects. The code is structured such that no modifications are required if correct format of pandas dataframe is created.  
+
+```python
+training_data = utilities.create_dataset(df_training,window_size, forecast_size,batch_size)
+test_data = utilities.create_dataset(df_training,window_size, forecast_size,batch_size)
+```
+The pandas dataframe that needs to be injested by "create_dataset" method in utilities.py, needs to have a datetime index and the target label column in the first columnn index. The "create_dataset" method outputs tesorflow dataset object for model input  as (input,target_label) of with tensors of shapes ((batchsize,window_len,n_total_features),(batchsize,forecast_len,1)). 
+
+### Training the Model
+
+Save the train_source_drfn.py file and run the script:
+```bash
+python train_source_drfn.py
+```
+### Testing the Model
+
+Run the test_source_drfn.py script:
+```bash
+python train_source_drfn.py
+```
+### Transferlearning
+
+if you wish to implement the transferlearning framework, simply change the csv file path in either of the transferlearn_target*_drfn.py file. and follow same steps used to train. 
+
+### Modifying the Model
+
+The architecture of DRFN can be modified according to your needs. To change the layers of the model, you need to interact with the model_components.py file.
+
+Within the model_components.py, you will find the modle configurations defined for Encoder, Decoder and Forecaster. 
+Simply change the layer configuration of the respective model you want. For example: adding a dense layer to the forecaster module. 
+
+```python
+def create_forecaster(latent_dim, forecast_len):
+    latent_inputs = layers.Input(shape=(latent_dim,))
+    x = layers.Dense(forecast_len * 10, activation="relu")(latent_inputs)
+    x = layers.Reshape((forecast_len, 10))(x)
+    x = layers.LSTM(50, return_sequences=True, activation="tanh")(x)
+    x = layers.LSTM(25, return_sequences=True, activation="tanh")(x) 
+
+    # add a new lstm layer 
+    x = layers.LSTM(15, return_sequences=True, activation="tanh")(x) 
+
+    forecaster_outputs = layers.Dense(1, activation="linear")(x)
+    forecaster = keras.Model(latent_inputs, forecaster_outputs, name="forecast")
+    forecaster.summary()
+
+    return forecaster
+```
+## Utilities
+
+In addition to the main model, you will find utility functions for data preprocessing and transformation under the utilities.py. This includes data scaling, normalization, time series data transformations, and other relevant functions.If you need custom transformations or data preprocessing, you can modify or add functions in these utility scripts to suit your data.
+
+
+
