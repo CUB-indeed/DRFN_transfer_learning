@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 
 window_len = 12
-forecast_len = 12
+forecast_len = 1
 latent_dim = 4
 n_total_features = 18
 batch_size = 50

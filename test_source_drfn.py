@@ -19,7 +19,7 @@ import matplotlib.pyplot as plt
 
 
 window_len = 12
-forecast_len = 12
+forecast_len = 1
 latent_dim = 4
 n_total_features = 18
 batch_size = 50
@@ -82,10 +82,6 @@ reconstruction, forecast = vae_loaded.predict(test_windowed)
 prediction = (tf.squeeze(forecast).numpy())
 
 reshaped_reconstruction = (tf.squeeze(reconstruction).numpy())
-
-
-
-print(reshaped_reconstruction.shape)
 
 
 utilities.compute_error_metrics(np.array(target)*dfs_scaling_factor,prediction*dfs_scaling_factor)

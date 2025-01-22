@@ -1,0 +1,23 @@
+*.csv
+sample.py
+persistance_predictions.py
+drfn_source.keras
+*.dylib
+# Ignore Python bytecode files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+
+tlenv/
+
+# Ignore IDE config files
+.idea/
+.vscode/
+
+# Ignore system files
+.DS_Store
+Thumbs.db
+
