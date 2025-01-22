@@ -5,7 +5,7 @@ from keras import ops
 from keras import layers
 from model_utilities import Sampling
 import utilities
-
+# import keras_hub
 
 def create_encoder(n_features, window_len, latent_dim):
     ### Model Inputs ###
@@ -57,53 +57,53 @@ def create_decoder(n_features,window_len,latent_dim):
 
     return decoder
 
-# def create_forecaster(n_features,latent_dim,forecast_len):
+def create_forecaster(n_features,latent_dim,forecast_len):
     
-#     n_features = n_features
-#     forecast_len = forecast_len
-#     latent_dim = latent_dim 
+    n_features = n_features
+    forecast_len = forecast_len
+    latent_dim = latent_dim 
     
-#     # Latent input
-#     latent_inputs = layers.Input(shape=(latent_dim,))
-
-#     x = layers.Dense(100, activation="relu")(latent_inputs)
-#     x = layers.Dense(50, activation="relu")(x)
-#     x = layers.Dense(forecast_len * n_features, activation="relu")(x)
-#     x = layers.Reshape((forecast_len, n_features))(x)
-
-#     x = layers.LSTM(50, return_sequences=True, activation="relu")(x)
-#     x = layers.LSTM(10, return_sequences=True, activation="relu")(x)
-#     x = layers.LSTM(5, return_sequences=True, activation="relu")(x)
-
-    
-    
-#     forecaster_outputs = layers.Dense(1, activation="relu")(x)  
-    
-#     forecaster = keras.Model(latent_inputs, forecaster_outputs, name="forecast")
-#     forecaster.summary()
-
-#     return forecaster
-
-
-def create_forecaster(latent_dim, forecast_len):
+    # Latent input
     latent_inputs = layers.Input(shape=(latent_dim,))
 
-    # Expand latent inputs into sequences directly
-    x = layers.Dense(forecast_len * 10, activation="relu")(latent_inputs)
-    x = layers.Reshape((forecast_len, 10))(x)
+    x = layers.Dense(100, activation="relu")(latent_inputs)
+    x = layers.Dense(50, activation="relu")(x)
+    x = layers.Dense(forecast_len * n_features, activation="relu")(x)
+    x = layers.Reshape((forecast_len, n_features))(x)
 
-    # LSTM layers for temporal processing
-    x = layers.LSTM(50, return_sequences=True, activation="tanh")(x)
-    x = layers.LSTM(25, return_sequences=True, activation="tanh")(x)
+    x = layers.LSTM(50, return_sequences=True, activation="relu")(x)
+    x = layers.LSTM(10, return_sequences=True, activation="relu")(x)
+    x = layers.LSTM(5, return_sequences=True, activation="relu")(x)
+
     
-    # Output layer with linear activation
-    forecaster_outputs = layers.Dense(1, activation="linear")(x)
     
-    # Forecaster model
+    forecaster_outputs = layers.Dense(1, activation="relu")(x)  
+    
     forecaster = keras.Model(latent_inputs, forecaster_outputs, name="forecast")
     forecaster.summary()
 
     return forecaster
+
+
+# def create_forecaster(latent_dim, forecast_len):
+#     latent_inputs = layers.Input(shape=(latent_dim,))
+
+#     # Expand latent inputs into sequences directly
+#     x = layers.Dense(forecast_len * 10, activation="relu")(latent_inputs)
+#     x = layers.Reshape((forecast_len, 10))(x)
+
+#     # LSTM layers for temporal processing
+#     x = layers.LSTM(50, return_sequences=True, activation="tanh")(x)
+#     x = layers.LSTM(25, return_sequences=True, activation="tanh")(x)
+    
+#     # Output layer with linear activation
+#     forecaster_outputs = layers.Dense(1, activation="linear")(x)
+    
+#     # Forecaster model
+#     forecaster = keras.Model(latent_inputs, forecaster_outputs, name="forecast")
+#     forecaster.summary()
+
+#     return forecaster
     
 
 

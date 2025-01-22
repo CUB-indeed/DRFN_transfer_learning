@@ -1,5 +1,6 @@
 *.csv
 sample.py
+persistance_predictions.py
 drfn_source.keras
 *.dylib
 # Ignore Python bytecode files

@@ -108,11 +108,12 @@ class DRFN_source(keras.Model):
 
 
 class DRFN_target(keras.Model):
-    def __init__(self, encoder_source, encoder, decoder, forecaster, **kwargs):
+    def __init__(self, encoder_source, encoder, decoder, forecaster, forecastor_training = False,  **kwargs):
         super(DRFN_target,self).__init__(**kwargs)
         self.encoder = encoder
         self.decoder = decoder
         self.forecaster = forecaster
+        self.forecastor_training = forecastor_training
         self.encoder_source = encoder_source
         self.total_loss_tracker = keras.metrics.Mean(name="total_loss")
         self.reconstruction_loss_tracker = keras.metrics.Mean(
@@ -137,7 +138,7 @@ class DRFN_target(keras.Model):
             z_mean, z_log_var, z = self.encoder(data[0])
             s_z_mean , s_log_var , s_z = self.encoder_source(data[0],training=False)
             reconstruction = self.decoder(z)
-            forecast = self.forecaster(z,training=False)
+            forecast = self.forecaster(z,training= self.forecastor_training)
             reconstruction_loss = ops.mean(
                 ops.sum(
                     keras.losses.mean_squared_error(data[0][..., :1], reconstruction),

@@ -19,12 +19,10 @@ from keras.api.callbacks import ReduceLROnPlateau
 
 
 
-window_len = 5
-forecast_len = 1
-latent_dim = 2
+window_len = 12
+forecast_len = 12
+latent_dim = 4
 n_total_features = 18
-n_aleatoric_features = 4
-n_deterministic_features = n_total_features - n_aleatoric_features
 batch_size = 50
 
 
@@ -74,7 +72,7 @@ test_windowed  = utilities.create_dataset(test_data,
 
 encoder = drfn_components.create_encoder(n_total_features,window_len,latent_dim)
 decoder = drfn_components.create_decoder(n_total_features,window_len,latent_dim)
-forecaster = drfn_components.create_forecaster(latent_dim,forecast_len) 
+forecaster = drfn_components.create_forecaster(n_total_features,latent_dim,forecast_len) 
 
 lr = ReduceLROnPlateau(monitor='forecast_loss',factor=0.2, patience=5,cooldown=5, min_lr=0.00000001)
 

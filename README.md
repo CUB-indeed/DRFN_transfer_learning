@@ -90,7 +90,7 @@ n_total_features = 18 # number of features in the dataset
 batch_size = 50 # batch size for data batching
 ```
 
-### Create Tensorflow dataset objects 
+### Creation of Tensorflow dataset objects and build model 
 
 In the train_source_drfn.py make any updates to training sizes and test sizes and split data. The training and testing split needs to be done before the datasets being processed into tensor_objects. The code is structured such that no modifications are required if correct format of pandas dataframe is created.  
 
@@ -98,14 +98,19 @@ In the train_source_drfn.py make any updates to training sizes and test sizes an
 training_data = utilities.create_dataset(df_training,window_size, forecast_size,batch_size)
 test_data = utilities.create_dataset(df_training,window_size, forecast_size,batch_size)
 ```
-The pandas dataframe that needs to be injested by "create_dataset" method in utilities.py, needs to have a datetime index and the target label column in the first columnn index. The "create_dataset" method outputs tesorflow dataset object for model input  as (input,target_label) of with tensors of shapes ((batchsize,window_len,n_total_features),(batchsize,forecast_len,1)). 
-
+The pandas dataframe that needs to be injested by "create_dataset" method in utilities.py, needs to have a datetime index and the target label column in the first columnn index. The "create_dataset" method outputs tesorflow dataset object for model input  as (input,target_label) of with tensors of shapes ((batchsize,window_len,n_total_features),(batchsize,forecast_len,1)).
+ 
 ### Training the Model
 
+Finally modify the path to save model in the training script 
+ ```python
+drfn.save('drfn_source.keras')
+```
 Save the train_source_drfn.py file and run the script:
 ```bash
 python train_source_drfn.py
 ```
+
 ### Testing the Model
 
 Run the test_source_drfn.py script:
@@ -114,13 +119,36 @@ python train_source_drfn.py
 ```
 ### Transferlearning
 
-if you wish to implement the transferlearning framework, simply change the csv file path in either of the transferlearn_target*_drfn.py file. and follow same steps used to train. 
+if you wish to implement the transferlearning framework, simply change the csv file path in either of the "transferlearn_target*_drfn.py" files and follow the same steps of data transformations before training.
+If you wish to implement transferlearning without labelled data in target domains make sure you use the "DRFN_target" class present in "drfn.py" with the keyword argument "forecastor_training" set to Flase. 
+
+```python
+encoder = drfn_components.create_encoder(n_total_features,window_len,latent_dim)
+decoder = drfn_components.create_decoder(n_total_features,window_len,latent_dim)
+drfn_source = keras.models.load_model('your path to saved source model.keras')
+encoder_source = drfn_source.encoder
+forecaster_source = drfn_source.forecaster
+drfn_target = drf.DRFN_target(encoder_source,encoder, decoder, forecaster_source,forecastor_training=False)
+drfn_target.build(input_shape=(None, window_len, n_total_features))
+```
+
+the "DRFN_target" class present in "drfn.py" with the keyword argument "forecastor_training" set to True. 
+
+```python
+encoder = drfn_components.create_encoder(n_total_features,window_len,latent_dim)
+decoder = drfn_components.create_decoder(n_total_features,window_len,latent_dim)
+drfn_source = keras.models.load_model('your path to saved source model.keras')
+encoder_source = drfn_source.encoder
+forecaster_source = drfn_source.forecaster
+drfn_target = drf.DRFN_target(encoder_source,encoder, decoder, forecaster_source,forecastor_training=True)
+drfn_target.build(input_shape=(None, window_len, n_total_features))
+```
 
 ### Modifying the Model
 
 The architecture of DRFN can be modified according to your needs. To change the layers of the model, you need to interact with the model_components.py file.
 
-Within the model_components.py, you will find the modle configurations defined for Encoder, Decoder and Forecaster. 
+Within the model_components.py, you will find the model configurations defined for Encoder, Decoder and Forecaster. 
 Simply change the layer configuration of the respective model you want. For example: adding a dense layer to the forecaster module. 
 
 ```python

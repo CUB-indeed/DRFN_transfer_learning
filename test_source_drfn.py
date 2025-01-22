@@ -17,14 +17,12 @@ import matplotlib.pyplot as plt
 
 
 
-window_len = 5
-forecast_len = 1
-latent_dim = 4
-n_total_features = 10
-n_aleatoric_features = 4
-n_deterministic_features = n_total_features - n_aleatoric_features
-batch_size = 10
 
+window_len = 12
+forecast_len = 12
+latent_dim = 4
+n_total_features = 18
+batch_size = 50
 
 # data prep
 

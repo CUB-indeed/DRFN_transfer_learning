@@ -18,12 +18,10 @@ import matplotlib.pyplot as plt
 
 
 
-window_len = 5
-forecast_len = 1
+window_len = 12
+forecast_len = 12
 latent_dim = 4
 n_total_features = 18
-n_aleatoric_features = 4
-n_deterministic_features = n_total_features - n_aleatoric_features
 batch_size = 50
 
 
@@ -99,7 +97,7 @@ utilities.plot_comparision(target,prediction)
 
 encoder_source = drfn_source.encoder
 forecaster_source = drfn_source.forecaster
-drfn_target = DRFN_target(encoder_source,encoder, decoder, forecaster_source)
+drfn_target = DRFN_target(encoder_source,encoder, decoder, forecaster_source,forecastor_training=False)
 drfn_target.build(input_shape=(None, window_len, n_total_features))
 drfn_target.compile(optimizer=keras.optimizers.Adam())
 drfn_target.fit(training_windowed,epochs=20)
@@ -120,7 +118,7 @@ decoder_label = drfn_components.create_decoder(n_total_features,window_len,laten
 
 encoder_source = drfn_source.encoder
 forecaster_source = drfn_source.forecaster
-drfn_target = DRFN_target(encoder_source,encoder_label, decoder_label, forecaster_source)
+drfn_target = DRFN_target(encoder_source,encoder_label, decoder_label, forecaster_source,forecastor_training=True)
 drfn_target.build(input_shape=(None, window_len, n_total_features))
 drfn_target.compile(optimizer=keras.optimizers.Adam())
 drfn_target.fit(training_windowed,epochs=100)
