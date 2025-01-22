@@ -1,4 +1,4 @@
-## DRFN - Deep Recurrent Fusion Network
+## DRFN - Deep Reconstruction Forecast Network
 
 This repository contains the code for the Deep Reconstruction Forecast Network (DRFN) architecture presented in our paper titled "Unsupervised Domain Adaptation Framework for Photovoltaic Power Forecasting Using Variational Auto-Encoders".The code has been made available to support reproducibility and foster further research in renewable energy (RE) forecasting.
 The DRFN framework addresses critical challenges in day-ahead energy production forecasting, particularly for newly installed photovoltaic (PV) plants where labeled historical data is unavailable. By employing a feature-based unsupervised domain adaptation approach, the DRFN architecture enables effective knowledge transfer without relying on adversarial training, offering a practical and computationally efficient alternative.
