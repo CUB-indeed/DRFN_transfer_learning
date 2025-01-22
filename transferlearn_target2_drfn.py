@@ -27,7 +27,8 @@ batch_size = 50
 
 # data prep
 
-dfk = pd.read_csv('/Users/sakshisharma/Desktop/TL_codes/target2.csv')
+csv_file_path = ''
+dfk = pd.read_csv(csv_file_path)
 dft1 = dfk.pipe(utilities.interpolate).pipe(utilities.dt_column).pipe(utilities.normalize_cnt)
 dft1_scaling_factor = dfk.power.max()
 

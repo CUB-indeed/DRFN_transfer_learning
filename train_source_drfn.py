@@ -26,9 +26,11 @@ n_total_features = 18
 batch_size = 50
 
 
-# data prep
 
-dfm3 = pd.read_csv('/Users/sakshisharma/Desktop/TL_codes/source.csv').pipe(utilities.clip_power)
+
+# data prep
+csv_file_path = ''
+dfm3 = pd.read_csv(csv_file_path).pipe(utilities.clip_power)
 dfs = dfm3.pipe(utilities.interpolate).pipe(utilities.dt_column).pipe(utilities.normalize_cnt)
 dfs_scaling_factor = dfm3.power.max()
 
